@@ -15,12 +15,10 @@ Build a lightweight web app to log and track gym workouts for two users (self + 
 
 ### 2.1 Users
 
-- One main user (User A), may want to add information about multiple users such as itself and partner. It should be easy to switch between "self view" and "other user view", or even compare both in the same screen.
-- No authentication system required for MVP (single shared access assumed)
+- Two hardcoded users: **Kat** (self) and **Suse** (partner). No authentication required; single shared access.
+- The UI must make it easy to switch between viewing/logging for Kat vs. Suse, or comparing both on the same screen.
 
-User configs: Hard coded: "Kat", "Suse"
-
-### 2.2. Exercise Creation
+### 2.2 Exercise Creation
 
 Either user can create exercises. The exercises will be associated with:
     - name 
@@ -37,20 +35,18 @@ Example structure of Exercise:
   "name": "Chest Press",
   "urls": ["https://www.youtube.com/watch?v=n8TOta_pfr4"],
   "type": "machine",
-  "body_parts": "chest",
-  "canonic_measure": "lbs"
+  "body_parts": ["chest"],
+  "canonic_measure": "lbs",
   "uuid": "uuid1",
 }
 ```
 
 
-### 2.2 Workout Logging
+### 2.3 Workout Logging
 
+Each workout session is shared between both users. When a new gym session is started in the UI, two workout records are created in the background — one for Kat and one for Suse — both stamped with the same date. The logger then toggles between the two users in the UI to enter each person's exercises independently.
 
-Each workout is associated to an user and a set of exercises. 
-Whenever a workout is first created in the UI, this will trigger two workout objects in the background one associated with each user.
-Each workout has a user selection (A or B) and a date/time (defaults to current date)
-The user can select in the browser which workout to log the data for (either user A or B).
+Each workout record has an owning user (Kat or Suse) and a date/time (defaults to current date).
 
 
 Each workout entry is an ordered set of several logs, where each log is associated with:
@@ -62,16 +58,15 @@ Each workout entry is an ordered set of several logs, where each log is associat
 
 
 Example structure of exercise log:
-```
+```json
 {
-  "user": "A",
-  "date": "2026-04-25",
+  "uuid": "log-uuid",
   "workout_uuid": "workout-uuid",
   "exercise_uuid": "exercise-uuid1",
   "sets": [
     {"reps": 8, "weight": 80, "measure": "lbs"},
     {"reps": 6, "weight": 85, "measure": "lbs"},
-    {"reps": 6, "weight": 20, "measure": "lbs"},
+    {"reps": 6, "weight": 20, "measure": "lbs"}
   ],
   "notes": "felt strong"
 }
@@ -80,14 +75,14 @@ Example structure of exercise log:
 **Interaction**: 
 The UI should be dynamic, where the user can add the sets by clicking a "+" and specifying the weight and reps. The user has to confirm the set by clicking on a checkbox. When adding a new set, the UI should automatically add a 1 min timer, which will begin after the user checks the box.
 
-Moreover, when the user first selects the exercise, it should assume that the user will do 3 sets and have the option to add as many sets as desired. The default values for sets and reps should match the ones from the last time that exercise was done. So, if the user A performed 3 sets of 12lbs of "Chest Press" two days ago, and is planning to do it again, the API should preemptively show that information. The user then has the ability of editing the numbers or clicking the checkbox.
+Moreover, when the user first selects the exercise, it should assume that the user will do 3 sets and have the option to add as many sets as desired. The default values for sets and reps should match the ones from the last time that exercise was done. So, if Kat performed 3 sets of 12 lbs of "Chest Press" two days ago and is planning to do it again, the UI should preemptively populate those values. The user then has the ability of editing the numbers or clicking the checkbox.
 
 
 **Storing data**: 
 Each log allows the user to specify the different measures. However, when storing in the database, the backend should convert the user-specified measure to the canonic measure that is associated with the exercise. This will guarantee seemless progress tracking irrespective of gym modifications.
 
 
-### 2.3 Progress Tracking Views
+### 2.4 Progress Tracking Views
 
 Provide simple dashboards:
 
@@ -101,17 +96,20 @@ Basic filtering:
 - by exercise
 
 
-### 2.4. Zero state behavior
+### 2.5 Zero State Behavior
 
-In the beginning there is no state. So the plots are empty, there's no history, so the behavior should be 0. 
+On first use, all collections are empty. Each page should handle this gracefully:
+
+- **Log Workout**: No previous-workout defaults are shown; the set builder starts with 3 empty rows.
+- **Dashboard**: Displays a "No workouts logged yet" message instead of an empty list.
+- **Progress charts**: Display an empty axis with a "No data yet for this exercise" label rather than a blank or broken chart.
+- **Exercise autocomplete**: Shows an empty dropdown with a prompt to create a new exercise.
 
 ## 3. Technical Stack
 
 ### 3.1 Frontend
 - Static web app (preferred: simple SPA or vanilla JS / React)
-- Must be deployable on:
-    - GitHub Pages (preferred for simplicity)
-    - OR Firebase Hosting
+- Deployable on GitHub Pages
 
 Constraints:
 - No backend server required for rendering UI
@@ -120,68 +118,92 @@ Constraints:
 
 ### 3.2 Backend / Database
 
-Preferred options:
+**Recommended: Supabase**
+- Postgres tables for structured data storage
+- Supabase JS SDK in frontend
+- Pros: structured schema, easy SQL queries for analytics, generous free tier
 
-- Option A (Recommended): Firebase
-    - Firestore for data storage
-    - Firebase SDK in frontend
-Pros: real-time sync, minimal backend work
-
-- Option B: Supabase
-    - Postgres-based schema
-    - Slightly more structured analytics
+Alternative: Firebase (Firestore)
+- Document-based storage, real-time sync
+- More setup friction for relational queries
 
 ### 3.3 Hosting
 GitHub Pages for frontend static site
-Firebase/Supabase for backend data
+Supabase for backend data
 
 **Important Clarification**:
 Jekyll can be used for GitHub Pages, but not necessary
-Recommendation: use Vite or simple static HTML + JS
+Recommendation: use Vite + React
 Avoid Jekyll unless blog-like structure is needed
 
 
 ## 4. Data Model
 
-**Collections / Tables** 
+Three Supabase (Postgres) tables:
 
-```json
-{
-  "user": "A",
-  "date": "2026-04-25",
-  "exercise": "Bench Press",
-  "sets": [
-    {"reps": 8, "weight": 80},
-    {"reps": 6, "weight": 85},
-    {"reps": 6, "weight": 20},
-  ],
-  "type": "barbell",
-  "notes": "felt strong"
-}
+### `exercises`
+One row per exercise definition, shared across both users. `body_parts` and `urls` are stored as Postgres arrays.
+```sql
+id            uuid PRIMARY KEY DEFAULT gen_random_uuid()
+name          text NOT NULL
+type          text NOT NULL   -- 'dumbbell' | 'barbell' | 'cable' | 'machine' | 'bodyweight'
+body_parts    text[]          -- e.g. ['chest', 'triceps']
+canonic_measure text NOT NULL DEFAULT 'lbs'  -- 'lbs' | 'kg' | 's' | 'min'
+urls          text[]          -- reference video links
+note          text
 ```
 
-Optional derived fields: `total_volume = sum(reps * weight)`
+### `workouts`
+One row per user per session. Starting a new session inserts two rows (one per user) with the same date.
+```sql
+id      uuid PRIMARY KEY DEFAULT gen_random_uuid()
+user    text NOT NULL    -- 'Kat' | 'Suse'
+date    date NOT NULL DEFAULT CURRENT_DATE
+```
+
+### `exercise_logs`
+One row per exercise performed within a workout. `sets` is stored as a JSONB array. Weights are converted to the exercise's `canonic_measure` at write time.
+```sql
+id             uuid PRIMARY KEY DEFAULT gen_random_uuid()
+workout_id     uuid REFERENCES workouts(id)
+exercise_id    uuid REFERENCES exercises(id)
+sets           jsonb NOT NULL  -- [{"reps": 8, "weight": 80}, ...]
+notes          text
+```
+
+`sets` element shape: `{"reps": integer, "weight": numeric}` — always in the exercise's `canonic_measure`.
+
+Optional derived field (computed client-side): `total_volume = sum(reps × weight)` per set, in `canonic_measure`.
 
 ## 5. Frontend Pages
 
 ### 5.1 Log Workout Page
-User selector (A/B toggle)
-Exercise input
-Set builder UI (add/remove sets)
-Measure specification (default to lbs)
-Save button
+- User toggle: Kat / Suse
+- "Start session" button — creates workout records for both users under today's date
+- Exercise selector (autocomplete from `exercises` table)
+- Set builder UI: starts with 3 rows pre-filled from last session; add/remove rows with +/−
+- Per-set fields: reps, weight, measure (default to exercise's `canonic_measure`)
+- Check box per set to confirm completion; triggers 1-minute rest timer
+- Optional notes field per exercise log
+- Save button writes the `exercise_log` document and converts weights to `canonic_measure`
 
-### 5.2 Dashboard Page
-Recent workouts feed
-- Filter by user
-- Filter by exercise
+### 5.2 Exercise Management Page
+- List of all exercises with name, type, body parts
+- Create new exercise: name, type, body_parts (multi-select), canonic_measure, urls, note
+- Edit existing exercise
+- No deletion (to preserve log history)
 
-### 5.3 Progress Page
-- Select exercise
-- Plot:
-    - max weight over time
-    - or volume over time
-    - volume over time for body part
+### 5.3 Dashboard Page
+- Recent workouts feed (chronological, newest first)
+- Filter by user (Kat / Suse / both)
+- Filter by exercise name
+
+### 5.4 Progress Page
+- Select user and exercise
+- Plots (all in `canonic_measure`):
+    - Max weight per session over time
+    - Total volume per session over time
+    - Volume over time per body part (aggregate across exercises)
 
 
 ## 6. Non-Functional Requirements
@@ -192,13 +214,16 @@ Recent workouts feed
 - Ability to populate database with exercises asynchronously
 
 ## 7. Suggested Architecture
+
+```
 Frontend (GitHub Pages)
     |
-    | Firebase SDK
+    | Supabase JS SDK (browser)
     v
-Firestore Database
+Supabase (Postgres + Auth + Storage)
+```
 
-No backend server required.
+No backend server required. All reads and writes happen directly from the browser via the Supabase JS SDK.
 
 ## 8. Stretch Goals (Optional)
 - PR tracking (personal records detection)
@@ -208,7 +233,7 @@ No backend server required.
 
 ## 9. Roadmap
 
-- Phase 1: Data model + Firebase setup + log form                                                                                                       
+- Phase 1: Data model + Supabase setup + log form                                                                                                       
 - Phase 2: Dashboard (history + filters)                                                                                                                
 - Phase 3: Progress charts                                                                                                                              
 - Phase 4: Stretch goals (prioritized)
