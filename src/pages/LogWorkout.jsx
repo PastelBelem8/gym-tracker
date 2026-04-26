@@ -123,16 +123,25 @@ function ExerciseAutocomplete({ exercises, value, onSelect }) {
   )
 }
 
+const defaultDraft = () => ({
+  selectedExercise: null,
+  sets: [emptySet(), emptySet(), emptySet()],
+  notes: '',
+})
+
 export default function LogWorkout() {
   const [activeUser, setActiveUser] = useState('Kat')
   const [session, setSession] = useState(null) // { Kat: workoutId, Suse: workoutId }
   const [starting, setStarting] = useState(false)
   const [exercises, setExercises] = useState([])
-  const [selectedExercise, setSelectedExercise] = useState(null)
-  const [sets, setSets] = useState([emptySet(), emptySet(), emptySet()])
-  const [notes, setNotes] = useState('')
+  const [drafts, setDrafts] = useState({ Kat: defaultDraft(), Suse: defaultDraft() })
   const [saving, setSaving] = useState(false)
   const [savedLogs, setSavedLogs] = useState({ Kat: [], Suse: [] })
+
+  const { selectedExercise, sets, notes } = drafts[activeUser]
+
+  const updateDraft = (updates) =>
+    setDrafts(d => ({ ...d, [activeUser]: { ...d[activeUser], ...updates } }))
 
   useEffect(() => {
     supabase.from('exercises').select('*').order('name').then(({ data }) => {
@@ -169,54 +178,47 @@ export default function LogWorkout() {
   }, [activeUser])
 
   const handleSelectExercise = async (ex) => {
-    setSelectedExercise(ex)
     const lastSets = await loadLastSession(ex.id)
-    if (lastSets && lastSets.length > 0) {
-      setSets(lastSets.map(s => ({
-        reps: s.reps,
-        weight: s.weight,
-        measure: ex.canonic_measure,
-        done: false,
-        timerLeft: null,
-      })))
-    } else {
-      setSets([
-        { ...emptySet(), measure: ex.canonic_measure },
-        { ...emptySet(), measure: ex.canonic_measure },
-        { ...emptySet(), measure: ex.canonic_measure },
-      ])
-    }
-    setNotes('')
+    const newSets = lastSets?.length > 0
+      ? lastSets.map(s => ({ reps: s.reps, weight: s.weight, measure: ex.canonic_measure, done: false, timerLeft: null }))
+      : [ex.canonic_measure, ex.canonic_measure, ex.canonic_measure].map(m => ({ ...emptySet(), measure: m }))
+    updateDraft({ selectedExercise: ex, sets: newSets, notes: '' })
   }
 
   const handleSetChange = (index, field, value) => {
-    setSets(prev => prev.map((s, i) => {
-      if (i !== index) return s
-      const newVal = typeof value === 'function' ? value(s[field]) : value
-      return { ...s, [field]: newVal }
-    }))
+    updateDraft({
+      sets: sets.map((s, i) => {
+        if (i !== index) return s
+        const newVal = typeof value === 'function' ? value(s[field]) : value
+        return { ...s, [field]: newVal }
+      })
+    })
   }
 
   const handleCheck = (index) => {
-    setSets(prev => prev.map((s, i) => {
-      if (i !== index || s.done) return s
-      return { ...s, done: true, timerLeft: 60 }
-    }))
+    updateDraft({
+      sets: sets.map((s, i) => {
+        if (i !== index || s.done) return s
+        return { ...s, done: true, timerLeft: 60 }
+      })
+    })
   }
 
   const addSet = () => {
     const last = sets[sets.length - 1]
-    setSets(prev => [...prev, {
-      reps: last?.reps ?? '',
-      weight: last?.weight ?? '',
-      measure: selectedExercise?.canonic_measure ?? 'lbs',
-      done: false,
-      timerLeft: null,
-    }])
+    updateDraft({
+      sets: [...sets, {
+        reps: last?.reps ?? '',
+        weight: last?.weight ?? '',
+        measure: selectedExercise?.canonic_measure ?? 'lbs',
+        done: false,
+        timerLeft: null,
+      }]
+    })
   }
 
   const removeSet = () => {
-    if (sets.length > 1) setSets(prev => prev.slice(0, -1))
+    if (sets.length > 1) updateDraft({ sets: sets.slice(0, -1) })
   }
 
   const saveLog = async () => {
@@ -246,9 +248,7 @@ export default function LogWorkout() {
       ...prev,
       [activeUser]: [...prev[activeUser], { exercise: selectedExercise, sets: convertedSets, notes }],
     }))
-    setSelectedExercise(null)
-    setSets([emptySet(), emptySet(), emptySet()])
-    setNotes('')
+    updateDraft(defaultDraft())
   }
 
   if (!session) {
@@ -332,7 +332,7 @@ export default function LogWorkout() {
             <textarea
               placeholder="Notes (optional)"
               value={notes}
-              onChange={e => setNotes(e.target.value)}
+              onChange={e => updateDraft({ notes: e.target.value })}
               className={styles.notes}
               rows={2}
             />

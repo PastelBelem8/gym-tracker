@@ -1,0 +1,27 @@
+## Database population
+
+Let's populate the database with the following exercises. Whenever an url is not specified leave it blank. Assume canonic measure is always lbs, unless specified:
+
+- Leg extension: body_type: quadriceps; type: machine; canonic_measure: lbs; Notes: "nao de pontapes, suba e desca devagar"
+- Leg press horizontal: body_type: quadriceps; type: machine; canonic_measure: lbs; Notes: "pes a largura dos ombros, nunca estique totalmente as pernas"
+- Rotary calf raise: body_type: calfs; type: machine; canonic_measure: lbs; 
+- Calf raise (leg press): body_type: calfs; type: machine; canonic_measure: lbs;
+- Hip abductor: body_type: glutes; type: machine; canonic_measure: lbs
+- Lat pulldown (cable): body_type: back; type: cable; canonic_measure: lbs
+- Lat pulldown (machine): body_type: back; type: cable; canonic_measure: lbs
+- Seated row (cable): body_type: back; type: cable; canonic_measure: lbs
+- Unilateral bent row: body_type: back; type: dumbell; canonic_measure: lbs
+- Bent over row: body_type: back; type: barbell; canonic_measure: lbs
+- Bicep curl: body_type: bicep; type: dumbell; canonic_measure: lbs; notes: "Banco a 45 graus, braco tem de esticar"
+- Seated Leg curl: body_type: legs, hamstrings, calfs; type: machine; canonic_measure: lbs
+- Romanian Deadlift: body_type: legs, hamstrings; type: dumbell; canonic_measure: lbs
+- Leg Press (45 degrees): body_type: legs; type: machine; canonic_measure: lbs; offset: 118
+- Plank: body_type: abs; type: bodyweight; canonic_measure: s
+- Chest Press: body_type: chest; type: machine; canonic_measure: lbs
+- Shoulder Press: body_type: shoulders; type: machine; canonic_measure: lbs
+- Shoulder Press (dumbell): body_type: shoulders; type: dumbell; canonic_measure: lbs
+- Strict military press: body_type: shoulders; type: barbell; canonic_measure: lbs
+- Triceps pushdown: body_type: triceps; type: cable; canonic_measure: lbs
+- Deadbug: body_type: abs; type: bodyweight; canonic_measure: none
+- Hip thrust (barbell): body_type: legs, glutes; type: barbell; canonic_measure: lbs
+- Glute kickback (cable): body_type: legs, glutes; type: cable; canonic_measure: lbs
