@@ -1,0 +1,185 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.userTabs {
+  display: flex;
+  gap: 6px;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.12s;
+  border: 1.5px solid transparent;
+}
+
+.tab:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.tabActive {
+  background: rgba(108, 99, 255, 0.15);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.searchInput {
+  width: 100%;
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 40px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.empty p {
+  font-size: 1rem;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Workout cards */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.userBadge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.kat {
+  background: rgba(167, 139, 250, 0.15);
+  color: var(--kat);
+}
+
+.suse {
+  background: rgba(251, 146, 60, 0.15);
+  color: var(--suse);
+}
+
+.cardDate {
+  font-weight: 600;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.cardMeta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.emptyLogs {
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Exercise log rows */
+.logList {
+  display: flex;
+  flex-direction: column;
+}
+
+.logRow {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+
+.logRow:last-child {
+  border-bottom: none;
+}
+
+.logRow:hover {
+  background: var(--surface2);
+}
+
+.logTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.logName {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.logSummary {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.logDetail {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.setChip {
+  background: var(--surface2);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.logNotes {
+  width: 100%;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 4px;
+}

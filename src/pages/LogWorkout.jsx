@@ -142,7 +142,7 @@ export default function LogWorkout() {
 
   const startSession = async () => {
     setStarting(true)
-    const today = new Date().toISOString().split('T')[0]
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date())
     const { data, error } = await supabase
       .from('workouts')
       .insert([
@@ -159,13 +159,13 @@ export default function LogWorkout() {
 
   const loadLastSession = useCallback(async (exerciseId) => {
     const { data } = await supabase
-      .from('exercise_logs')
-      .select('sets, workout_id, workouts!inner(user, date)')
-      .eq('exercise_id', exerciseId)
-      .eq('workouts.user', activeUser)
-      .order('workouts(date)', { ascending: false })
+      .from('workouts')
+      .select('date, exercise_logs!inner(sets)')
+      .eq('user', activeUser)
+      .eq('exercise_logs.exercise_id', exerciseId)
+      .order('date', { ascending: false })
       .limit(1)
-    return data?.[0]?.sets ?? null
+    return data?.[0]?.exercise_logs?.[0]?.sets ?? null
   }, [activeUser])
 
   const handleSelectExercise = async (ex) => {

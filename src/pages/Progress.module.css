@@ -1,0 +1,112 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* User toggle */
+.userToggle {
+  display: flex;
+  gap: 8px;
+}
+
+.userBtn {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1rem;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.userBtn:hover {
+  background: var(--surface2);
+}
+
+.activeKat {
+  background: rgba(167, 139, 250, 0.15) !important;
+  color: var(--kat) !important;
+  border-color: var(--kat) !important;
+}
+
+.activeSuse {
+  background: rgba(251, 146, 60, 0.15) !important;
+  color: var(--suse) !important;
+  border-color: var(--suse) !important;
+}
+
+/* Sections */
+.section {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.select {
+  width: 100%;
+  padding: 10px 12px;
+}
+
+/* Charts */
+.chartBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chartLabel {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.emptyChart {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* Tooltip */
+.tooltip {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 0.82rem;
+}
+
+.tooltipDate {
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-size: 0.78rem;
+}
