@@ -9,8 +9,10 @@ const BODY_PARTS = [
   'core', 'quads', 'hamstrings', 'glutes', 'calves', 'traps', 'lats', 'full body',
 ]
 
+const TYPE_DEFAULTS = { barbell: 45, dumbbell: 0, cable: 0, machine: 0, bodyweight: 0 }
+
 const emptyForm = () => ({
-  name: '', type: 'dumbbell', body_parts: [], canonic_measure: 'lbs', urls: '', note: '',
+  name: '', type: 'dumbbell', body_parts: [], canonic_measure: 'lbs', urls: '', note: '', offset: 0,
 })
 
 export default function ExerciseManagement() {
@@ -44,6 +46,7 @@ export default function ExerciseManagement() {
       canonic_measure: ex.canonic_measure,
       urls: (ex.urls ?? []).join('\n'),
       note: ex.note ?? '',
+      offset: ex.offset ?? 0,
     })
     setShowForm(true)
   }
@@ -67,6 +70,7 @@ export default function ExerciseManagement() {
       canonic_measure: form.canonic_measure,
       urls: form.urls.split('\n').map(u => u.trim()).filter(Boolean),
       note: form.note.trim() || null,
+      offset: Number(form.offset) || 0,
     }
     if (editId) {
       await supabase.from('exercises').update(payload).eq('id', editId)
@@ -103,6 +107,7 @@ export default function ExerciseManagement() {
                 <span key={bp} className={styles.tag}>{bp}</span>
               ))}
               <span className={styles.measure}>{ex.canonic_measure}</span>
+              {ex.offset > 0 && <span className={styles.offset}>+{ex.offset} offset</span>}
             </div>
           </div>
         ))}
@@ -130,7 +135,14 @@ export default function ExerciseManagement() {
             <div className={styles.fieldRow}>
               <div className={styles.field}>
                 <label>Type</label>
-                <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
+                <select
+                  value={form.type}
+                  onChange={e => setForm(f => ({
+                    ...f,
+                    type: e.target.value,
+                    offset: TYPE_DEFAULTS[e.target.value] ?? 0,
+                  }))}
+                >
                   {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
@@ -139,6 +151,20 @@ export default function ExerciseManagement() {
                 <select value={form.canonic_measure} onChange={e => setForm(f => ({ ...f, canonic_measure: e.target.value }))}>
                   {MEASURES.map(m => <option key={m} value={m}>{m}</option>)}
                 </select>
+              </div>
+            </div>
+
+            <div className={styles.fieldRow}>
+              <div className={styles.field}>
+                <label>Offset ({form.canonic_measure})</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  value={form.offset}
+                  onChange={e => setForm(f => ({ ...f, offset: e.target.value }))}
+                  placeholder="e.g. 45 for barbell"
+                />
               </div>
             </div>
 

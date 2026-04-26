@@ -116,11 +116,6 @@
   color: var(--text-muted);
 }
 
-.emptyLogs {
-  padding: 12px 14px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
 
 /* Exercise log rows */
 .logList {
@@ -182,4 +177,137 @@
   color: var(--text-muted);
   font-style: italic;
   margin-top: 4px;
+}
+
+.editBtn {
+  margin-left: auto;
+  margin-top: 2px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(108, 99, 255, 0.12);
+  border-radius: var(--radius-sm);
+  transition: background 0.12s;
+}
+
+.editBtn:hover {
+  background: rgba(108, 99, 255, 0.22);
+}
+
+/* Edit modal */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 20px 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85dvh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalHeader h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.closeBtn {
+  background: var(--surface2);
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+.editSetHeader {
+  display: grid;
+  grid-template-columns: 24px 1fr 1fr 32px;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 2px;
+}
+
+.editSetRow {
+  display: grid;
+  grid-template-columns: 24px 1fr 1fr 32px;
+  gap: 8px;
+  align-items: center;
+}
+
+.setIdx {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.removeSetBtn {
+  width: 32px;
+  height: 36px;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+}
+
+.removeSetBtn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.addSetBtn {
+  align-self: flex-start;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: rgba(108, 99, 255, 0.15);
+  color: var(--primary);
+  border-radius: var(--radius-sm);
+}
+
+.addSetBtn:hover {
+  background: rgba(108, 99, 255, 0.25);
+}
+
+.notesInput {
+  resize: none;
+}
+
+.saveBtn {
+  background: var(--primary);
+  color: white;
+  padding: 12px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

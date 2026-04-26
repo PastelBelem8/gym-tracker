@@ -93,6 +93,14 @@
   margin-left: auto;
 }
 
+.offset {
+  font-size: 0.72rem;
+  color: var(--suse);
+  background: rgba(251, 146, 60, 0.1);
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
 /* Modal */
 .overlay {
   position: fixed;
